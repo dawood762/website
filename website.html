@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mini Bob Clone</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f1f3f6;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Header */
+  header {
+    background: #2874f0;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    user-select: none;
+    cursor: pointer;
+  }
+  .search-bar {
+    flex-grow: 1;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 10px 50px 10px 15px;
+    border-radius: 2px;
+    border: none;
+    font-size: 1rem;
+  }
+  .search-bar button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ffe500;
+    border: none;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 2px;
+  }
+  .search-bar button:hover {
+    background: #ffd300;
+  }
+
+  /* Products grid */
+  main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+    gap: 25px;
+  }
+  .product-card {
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    box-shadow: 0 6px 15px rgb(0 0 0 / 0.2);
+  }
+  .product-image {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-bottom: 1px solid #eee;
+    background: #fafafa;
+  }
+  .product-info {
+    padding: 12px 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #212121;
+    flex-grow: 1;
+  }
+  .product-price {
+    color: #388e3c;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .rating {
+    background: #388e3c;
+    color: white;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    display: inline-block;
+  }
+  .no-results {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Bob</div>
+  <div class="search-bar">
+    <input type="search" id="searchInput" placeholder="Search for products, brands and more" aria-label="Search products" />
+    <button id="searchBtn">Search</button>
+  </div>
+</header>
+
+<main>
+  <div class="products-grid" id="productsGrid"></div>
+</main>
+
+<script>
+  const products = [
+    { name: "Apple iPhone 13", price: 69999, rating: 4.5, image: "https://images.unsplash.com/photo-1631189306482-c59a4a503f49?auto=format&fit=crop&w=400&q=80" },
+    { name: "Samsung Galaxy S21", price: 59999, rating: 4.4, image: "https://images.unsplash.com/photo-1611078480945-22ac0f92f4f0?auto=format&fit=crop&w=400&q=80" },
+    { name: "Sony WH-1000XM4 Headphones", price: 24999, rating: 4.7, image: "https://images.unsplash.com/photo-1590080877777-6b9c8e8a3e32?auto=format&fit=crop&w=400&q=80" },
+    { name: "Nike Running Shoes", price: 4999, rating: 4.3, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" },
+    { name: "Dell Inspiron Laptop", price: 55999, rating: 4.2, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" },
+    { name: "Canon DSLR Camera", price: 35999, rating: 4.5, image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" },
+    { name: "Apple MacBook Pro", price: 129999, rating: 4.8, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80" },
+    { name: "Samsung 55-inch Smart TV", price: 39999, rating: 4.4, image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" },
+    { name: "Adidas Sports Watch", price: 5999, rating: 4.1, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80" },
+    { name: "HP Wireless Mouse", price: 799, rating: 4.0, image: "https://images.unsplash.com/photo-1593642532400-2682810df593?auto=format&fit=crop&w=400&q=80" },
+    { name: "Logitech Keyboard", price: 2999, rating: 4.3, image: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&w=400&q=80" },
+    { name: "KitchenAid Mixer", price: 15999, rating: 4.6, image: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=400&q=80" },
+    { name: "Amazon Echo Dot", price: 3499, rating: 4.4, image: "https://images.unsplash.com/photo-1515165562835-c0d3dd6a8193?auto=format&fit=crop&w=400&q=80" },
+    { name: "Fossil Men's Wallet", price: 2499, rating: 4.2, image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80" },
+    { name: "Sony PlayStation 5", price: 49999, rating: 4.9, image: "https://images.unsplash.com/photo-1606813909320-7f6b8e7f3b48?auto=format&fit=crop&w=400&q=80" },
+    { name: "Google Pixel 6", price: 44999, rating: 4.3, image: "https://images.unsplash.com/photo-1631093491057-9af0db7c9199?auto=format&fit=crop&w=400&q=80" },
+    { name: "Kindle Paperwhite", price: 8499, rating: 4.7, image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80" },
+    { name: "Apple Watch Series 7", price: 32999, rating: 4.5, image: "https://images.unsplash.com/photo-1509475826633-fed577a2c71b?auto=format&fit=crop&w=400&q=80" },
+    { name: "JBL Bluetooth Speaker", price: 4999, rating: 4.3, image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" },
+    { name: "Xbox Series X", price: 49999, rating: 4.8, image: "https://images.unsplash.com/photo-1618879952921-1a02a65e7e44?auto=format&fit=crop&w=400&q=80" },
+  ];
+
+  const productsGrid = document.getElementById('productsGrid');
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+
+  function renderProducts(list) {
+    productsGrid.innerHTML = "";
+    if(list.length === 0){
+      productsGrid.innerHTML = '<div class="no-results">No products found.</div>';
+      return;
+    }
+    list.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img class="product-image" src="${p.image}" alt="${p.name}" />
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">₹${p.price.toLocaleString()}</div>
+          <div class="rating">⭐ ${p.rating.toFixed(1)}</div>
+        </div>
+      `;
+      productsGrid.appendChild(card);
+    });
+  }
+
+  function searchProducts() {
+    const query = searchInput.value.toLowerCase().trim();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+    renderProducts(filtered);
+  }
+
+  // Render all products initially
+  renderProducts(products);
+
+  searchBtn.addEventListener('click', searchProducts);
+  searchInput.addEventListener('input', searchProducts);
+</script>
+
+</body>
+</html>
+S
